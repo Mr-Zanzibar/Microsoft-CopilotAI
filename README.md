@@ -15,6 +15,8 @@
 
 2. Everything will be automatic.
 
+---
+
 ### Is this script safe? 🛡️
 
 Its only function is to modify the windows registry in order to enable Copilot, so its safe to use.
@@ -24,6 +26,7 @@ Its only function is to modify the windows registry in order to enable Copilot, 
 This script was created to enable copilot, not to do anything else
 there is also a security system for slower builds, it will not break your system.
 
+---
 
 **<div align="center" id="footer">All rights reserved. <div>**
 <br>
