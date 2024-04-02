@@ -25,6 +25,8 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
 Write-Host "Remote Signed Policy Changed." -ForegroundColor Blue
 Log-Message "REMOTE SIGNED CHANGED" -LogFilePath $logFilePath
 
+Start-Sleep -Seconds 1.5
+
 # Get Windows version
 $windowsVersion = [System.Environment]::OSVersion.Version
 Log-Message "OS version: $windowsVersion" -LogFilePath $logFilePath
