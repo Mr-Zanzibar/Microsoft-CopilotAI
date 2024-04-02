@@ -19,15 +19,15 @@
 
 ### Is this script safe? 🛡️
 
-Its only function is to modify the windows registry in order to enable Copilot, so its safe to use.
+Its only function is to modify the Windows registry in order to enable Copilot, so it is safe to use.
 
-### this broke my PC!
+### This broke my PC!
 
-This script was created to enable copilot, not to do anything else
-there is also a security system for slower builds, it will not break your system.
+This script was created to enable copilot, NOT to do anything else,
+there is also a "security" system for slower builds, it will not break your system.
 
 ---
 
-**<div align="center" id="footer">All rights reserved. <div>**
+**<div align="center" id="footer">All rights Reserved. <div>**
 <br>
 <div align="right"><a href="#">(Back to top)</a></div>
