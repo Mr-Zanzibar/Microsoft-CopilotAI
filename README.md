@@ -28,6 +28,12 @@ there is also a "security" system for slower builds, it will not break your syst
 
 ---
 
+# <p align="center"> REMINDER </p>
+
+- this script may not work, it depends on many factors
+
+---
+
 **<div align="center" id="footer">All rights Reserved. <div>**
 <br>
 <div align="right"><a href="#">(Back to top)</a></div>
