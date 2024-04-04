@@ -12,6 +12,29 @@ function Log-Message {
     Add-Content -Path $LogFilePath -Value "[$timestamp] $Message"
 }
 
+# Function to log error messages to a file
+function Log-Error {
+    param(
+        [string]$ErrorMessage,
+        [string]$LogFilePath
+    )
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+    Add-Content -Path $LogFilePath -Value "[$timestamp] ERROR: $ErrorMessage"
+    Write-Host "ERROR: $ErrorMessage" -ForegroundColor Red
+}
+
+function Confirm-Operation {
+    param(
+        [string]$Message
+    )
+    $choice = Read-Host -Prompt "$Message (Y/N)"
+    if ($choice -eq "Y" -or $choice -eq "y") {
+        return $true
+    } else {
+        return $false
+    }
+}
+
 # Check if the log file already exists, and delete it if it does
 if (Test-Path $logFilePath) {
     Remove-Item $logFilePath -Force
@@ -21,9 +44,14 @@ if (Test-Path $logFilePath) {
 Log-Message "Starting Copilot unlocking script..." -LogFilePath $logFilePath
 
 # Set the execution policy
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
-Write-Host "Remote Signed Policy Changed." -ForegroundColor Blue
-Log-Message "REMOTE SIGNED CHANGED" -LogFilePath $logFilePath
+try {
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force -ErrorAction Stop
+    Write-Host "Remote Signed Policy Changed." -ForegroundColor Blue
+    Log-Message "REMOTE SIGNED AND EXECUTION POLICY CHANGED." -LogFilePath $logFilePath
+} catch {
+    $errorMessage = $_.Exception.Message
+    Log-Error -ErrorMessage $errorMessage -LogFilePath $logFilePath
+}
 
 Start-Sleep -Seconds 1.5
 
@@ -31,30 +59,9 @@ Start-Sleep -Seconds 1.5
 $windowsVersion = [System.Environment]::OSVersion.Version
 Log-Message "OS version: $windowsVersion" -LogFilePath $logFilePath
 
-# Check if Windows version is at least 22H2 (build 22000)
-if ($windowsVersion -ge [System.Version]::new("10.0.22000")) {
-    Write-Host "OS: $windowsVersion" -ForegroundColor Blue
-
-    # Check for SSD or HDD
-    $diskType = ""
-    if (Get-PhysicalDisk | Where-Object MediaType -eq "SSD") {
-        $diskType = "SSD"
-        if ($diskType -eq "SSD") {
-            Write-Host "Detected SSD. Performing SSD operations..." -ForegroundColor Green
-            Log-Message "SSD Detected." -LogFilePath $logFilePath
-            Start-Sleep -Seconds 10
-        }
-    } elseif (Get-PhysicalDisk | Where-Object MediaType -eq "HDD") {
-        $diskType = "HDD"
-        if ($diskType -eq "HDD") {
-            Write-Host "Detected HDD. Performing HDD operations..." -ForegroundColor Green
-            Log-Message "HDD Detected." -LogFilePath $logFilePath
-            Start-Sleep -Seconds 20
-        }
-    }
-
+# Ask user for confirmation before making registry changes
+if (Confirm-Operation "Do you want to enable Copilot features? (if u clicked this you should press Y right?)") {
     Start-Sleep -Seconds 1.5
-
     # Registry keys
     $regPathBingChat = "HKCU:\Software\Microsoft\Windows\Shell\Copilot\BingChat"
     $regPathCopilot = "HKCU:\Software\Microsoft\Windows\Shell\Copilot"
@@ -68,10 +75,9 @@ if ($windowsVersion -ge [System.Version]::new("10.0.22000")) {
     } else {
         Write-Host "IsUserEligible is ALREADY set to 1, moving on to the next operation." -ForegroundColor Green
         Log-Message "IsUserEligible is DONE." -LogFilePath $logFilePath
-        Log-Message "PATH: HKEY_CURRENT_USER:\Software\Microsoft\Windows\Shell\Copilot\BingChat" -LogFilePath $logFilePath
+        Log-Message "PATH: $regPathBingChat" -LogFilePath $logFilePath
     }
 
-    # Wait for 1.5 seconds
     Start-Sleep -Seconds 1.5
 
     # Check if IsCopilotAvailable is already set to 1, otherwise set it to 1
@@ -82,10 +88,9 @@ if ($windowsVersion -ge [System.Version]::new("10.0.22000")) {
     } else {
         Write-Host "IsCopilotAvailable is ALREADY set to 1, moving on to the next operation." -ForegroundColor Green
         Log-Message "IsCopilotAvailable is DONE." -LogFilePath $logFilePath
-        Log-Message "PATH: HKEY_CURRENT_USER:\Software\Microsoft\Windows\Shell\Copilot" -LogFilePath $logFilePath
+        Log-Message "PATH: $regPathCopilot" -LogFilePath $logFilePath
     }
 
-    # Wait for 1.5 seconds
     Start-Sleep -Seconds 1.5
 
     # Check if ShowCopilotButton is already set to 1, otherwise set it to 1
@@ -96,7 +101,7 @@ if ($windowsVersion -ge [System.Version]::new("10.0.22000")) {
     } else {
         Write-Host "ShowCopilotButton is ALREADY set to 1, Copilot should be enabled now." -ForegroundColor Green
         Log-Message "ShowCopilotButton is DONE." -LogFilePath $logFilePath
-        Log-Message "PATH: HKEY_CURRENT_USER:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -LogFilePath $logFilePath
+        Log-Message "PATH: $regPathExplorer" -LogFilePath $logFilePath
     }
 
     Start-Sleep -Seconds 1.5
@@ -104,11 +109,7 @@ if ($windowsVersion -ge [System.Version]::new("10.0.22000")) {
     Write-Host "CONFIGURATION COMPLETED!, Enjoy." -ForegroundColor Green
     Log-Message "COPILOT SHOULD BE ENABLED!" -LogFilePath $logFilePath
 } else {
-    # Windows version is not compatible
-    Write-Host "Windows version not compatible. Copilot is not available for your version of Windows." -ForegroundColor Red
-    Write-Host "Your Windows version: $windowsVersion" -ForegroundColor Red
-    Write-Host "Minimum required version: 10.0.22000 (22H2)" -ForegroundColor Red
-
-    Log-Message "Your Windows version: $windowsVersion" -LogFilePath $logFilePath
-    Log-Message "NOT USABLE, ABORTING..." -LogFilePath $logFilePath
+    Write-Host "Operation cancelled by user." -ForegroundColor Yellow
+    Log-Message "Operation cancelled by user. (you have trust issues?)" -LogFilePath $logFilePath
 }
+
