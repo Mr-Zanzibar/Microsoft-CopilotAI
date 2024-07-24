@@ -9,7 +9,7 @@
 > [!NOTE]
 > This script is designed for Windows 11/10 22H2 OR higher Builds, please update your system to these versions to avoid errors.
 
-1. Run the following command in a PowerShell prompt:
+1. Run the following command in a PowerShell prompt (opened as administrator):
 
 `iwr -useb https://github.com/Mr-Zanzibar/Microsoft-CopilotAI/releases/download/Copilot/Copilot.ps1 | iex`
 
